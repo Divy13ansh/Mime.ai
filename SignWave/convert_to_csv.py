@@ -3,8 +3,8 @@ import csv
 import pandas as pd
 
 # === Input and output ===
-INPUT_JSON = "static/json/reference1.json"
-OUTPUT_CSV = "reference1_flat.csv"
+INPUT_JSON = "static/json/reference1_normalized.json"
+OUTPUT_CSV = "reference1_normalized.csv"
 
 # === Load the reference JSON ===
 with open(INPUT_JSON, "r") as f:
@@ -31,7 +31,6 @@ for gloss, frames in data.items():
                 }
                 rows.append(row)
 
-# === Save as CSV ===
 df = pd.DataFrame(rows)
 df.to_csv(OUTPUT_CSV, index=False)
 print(f"✅ Saved flattened data to {OUTPUT_CSV}")

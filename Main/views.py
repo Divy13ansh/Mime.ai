@@ -6,6 +6,7 @@ from rest_framework.parsers import MultiPartParser
 from .utils.glossifier import normalize_and_glossify
 from .utils.video_transcriber import video_to_text
 from Main.utils.assemblyai_transcriber import transcribe_audio
+from Main.utils.translator import translate_to_english
 import tempfile
 import os
 
@@ -63,5 +64,23 @@ class VideoToGlossView(APIView):
             text = video_to_text(temp_file_path)
             gloss = normalize_and_glossify(text)
             return Response({"text": text, "gloss": gloss}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+
+class TranslateToGlossView(APIView):
+    def post(self, request):
+        input_text = request.data.get("text", "")
+        if not input_text:
+            return Response({"error": "Text is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            english_text = translate_to_english(input_text)
+            gloss_text = normalize_and_glossify(english_text)
+            return Response({
+                "original": input_text,
+                "translated": english_text,
+                "gloss": gloss_text
+            })
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

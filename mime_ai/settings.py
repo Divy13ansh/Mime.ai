@@ -4,6 +4,11 @@ load_dotenv()
 
 from pathlib import Path
 
+
+########
+CORS_ALLOW_ALL_ORIGINS = True ### will change this to the frontend URL when deployed
+########
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 ASSEMBLYAI_API_KEY = os.getenv("ASSEMBLYAI_API_KEY")
@@ -30,7 +35,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'Main'
+    'Main',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
@@ -41,6 +47,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware'
 ]
 
 ROOT_URLCONF = 'mime_ai.urls'

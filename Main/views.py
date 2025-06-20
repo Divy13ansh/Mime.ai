@@ -5,6 +5,7 @@ from rest_framework import status
 from rest_framework.parsers import MultiPartParser
 from .utils.glossifier import normalize_and_glossify
 from .utils.video_transcriber import video_to_text
+from .utils.sign_to_text import sign_video_to_text
 from Main.utils.assemblyai_transcriber import transcribe_audio
 from Main.utils.translator import translate_to_english
 import tempfile
@@ -84,3 +85,23 @@ class TranslateToGlossView(APIView):
             })
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+# class SignVideoToTextView(APIView):
+#     parser_classes = [MultiPartParser]
+
+#     def post(self, request):
+#         video_file = request.FILES.get('video')
+#         if not video_file:
+#             return Response({"error": "No video uploaded."}, 400)
+
+#         with tempfile.NamedTemporaryFile(delete=False, suffix=".mp4") as tmp:
+#             video_file.chunks()
+#             for chunk in video_file.chunks():
+#                 tmp.write(chunk)
+#             video_path = tmp.name
+
+#         try:
+#             sentence = sign_video_to_text(video_path)
+#             return Response({"text": sentence}, 200)
+#         except Exception as e:
+#             return Response({"error": str(e)}, 500)

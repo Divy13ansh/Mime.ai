@@ -10,6 +10,11 @@ services:
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: mime_ai.settings
+      - key: PYTHONUNBUFFERED
+        value: "1"
       - key: ASSEMBLYAI_API_KEY
-        value: 9f4244cd19e146bcbed85bf34ce156fb
-      # Add other keys as needed
+        sync: false
+      - key: SECRET_KEY
+        sync: false
+      - key: DEBUG
+        value: "False"

@@ -56,7 +56,6 @@ networkx
 nltk
 numba
 numpy
-openai-whisper
 opencv-contrib-python
 opencv-python
 packaging
@@ -77,7 +76,6 @@ rfc3986
 rich
 setuptools
 shellingham
-sign_language_translator
 six
 smart-open
 sniffio

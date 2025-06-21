@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: mime-ai
+    env: python
+    buildCommand: |
+      apt-get update
+      apt-get install -y ffmpeg
+      pip install -r requirements.txt
+    startCommand: python manage.py runserver 0.0.0.0:$PORT
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: mime_ai.settings
+      - key: ASSEMBLYAI_API_KEY
+        value: 9f4244cd19e146bcbed85bf34ce156fb
+      # Add other keys as needed

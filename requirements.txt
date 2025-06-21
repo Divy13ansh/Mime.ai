@@ -26,6 +26,7 @@ fonttools
 fsspec
 future
 googletrans
+gunicorn
 h11
 h2
 hpack

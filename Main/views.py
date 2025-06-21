@@ -5,7 +5,7 @@ from rest_framework import status
 from rest_framework.parsers import MultiPartParser
 from .utils.glossifier import normalize_and_glossify
 from .utils.video_transcriber import video_to_text
-from .utils.sign_to_text import sign_video_to_text
+# from .utils.sign_to_text import sign_video_to_text
 from Main.utils.assemblyai_transcriber import transcribe_audio
 from Main.utils.translator import translate_to_english
 import tempfile

@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import TextToGlossView, AudioToGlossView, VideoToGlossView, TranslateToGlossView,SignVideoToTextView
+from .views import TextToGlossView, AudioToGlossView, VideoToGlossView, TranslateToGlossView
 
 urlpatterns = [
     path("api/text-to-gloss/", TextToGlossView.as_view()),

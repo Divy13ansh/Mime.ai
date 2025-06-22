@@ -81,7 +81,7 @@ fetch('static/json/reference1_normalized.json')
 
         let clock = new THREE.Clock();
         let delta = 0;
-        let interval = 1 / 15;
+        let interval = 1 / 10;
 
         function render() {
             requestAnimationFrame(render);

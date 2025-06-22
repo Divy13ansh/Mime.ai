@@ -1,9 +1,12 @@
 from django.urls import path
-from .views import TextToGlossView, AudioToGlossView, VideoToGlossView, TranslateToGlossView
+from .views import UnifiedGlossView
+from django.http import JsonResponse
+
+def health_check(request):
+    return JsonResponse({"status": "ok"})
+
 
 urlpatterns = [
-    path("api/text-to-gloss/", TextToGlossView.as_view()),
-    path("api/audio-to-gloss/", AudioToGlossView.as_view()),
-    path("api/video-to-gloss/", VideoToGlossView.as_view(), name="video-to-gloss"),
-     path("api/translate-to-gloss/", TranslateToGlossView.as_view(), name="translate_to_gloss"),
+    path("api/process/", UnifiedGlossView.as_view(), name="unified_gloss"),
+    path("", health_check),
 ]

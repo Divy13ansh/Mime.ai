@@ -12,6 +12,7 @@ CORS_ALLOW_ALL_ORIGINS = True ### will change this to the frontend URL when depl
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 ASSEMBLYAI_API_KEY = os.getenv("ASSEMBLYAI_API_KEY")
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 print(ASSEMBLYAI_API_KEY)
 
 # Quick-start development settings - unsuitable for production

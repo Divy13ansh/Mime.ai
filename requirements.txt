@@ -26,10 +26,9 @@ fonttools
 fsspec
 future
 googletrans
-gunicorn
 h11
 h2
-hpack
+hpack`
 hstspreload
 httpcore
 httpx

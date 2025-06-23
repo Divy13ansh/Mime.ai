@@ -52,14 +52,15 @@ def get_synonym_in_vocab_spacy(word):
             "max_tokens": 6000  # Increased to ensure complete responses
         }
 
-        print(f"Requesting synonym for: {word}")
-        print(f"Payload: {payload}")
+        # print(f"Requesting synonym for: {word}")
+        # print(f"Payload: {payload}")
 
         # Make the API request
         response = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=payload)
         response.raise_for_status()
         data = response.json()
-        print(f"Response: {data}")
+        # print(f"Response: {data}")
+        # print(data['choices'][0]['message']['content'].strip() if 'choices' in data and data['choices'] else None)
         return data['choices'][0]['message']['content'].strip() if 'choices' in data and data['choices'] else None
 
 def normalize_and_glossify(text):

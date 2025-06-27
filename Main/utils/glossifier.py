@@ -1,82 +1,116 @@
-# import spacy
-# import re
+import json
+import os
 from django.conf import settings
 import requests
+from nltk.corpus import stopwords
 
-# Load spaCy's small English model
-# nlp = spacy.load("en_core_web_sm")
+# import nltk
+# nltk.download('stopwords')
 
-# Load your ASL vocabulary set
+stop_words = set(stopwords.words('english'))
+
+
+# Load animation vocab
 with open('Main/vocab/animation_words.txt', 'r') as f:
     animation_words = [line.strip().lower() for line in f if line.strip()]
 
-word_list = ", ".join(animation_words)
+# Path to the JSON cache file
+CACHE_FILE = 'Main/vocab/word_synonym_map.json'
+
+# Load synonym cache from file
+if os.path.exists(CACHE_FILE):
+    with open(CACHE_FILE, 'r') as f:
+        synonym_cache = json.load(f)
+else:
+    synonym_cache = {}
+
+# Save mapping to cache file
+def save_cache():
+    with open(CACHE_FILE, 'w') as f:
+        json.dump(synonym_cache, f, indent=2)
 
 def get_synonym_in_vocab_spacy(word):
-    
     word = word.lower()
 
+    # 1. Check if already in cache
+    if word in synonym_cache:
+        return synonym_cache[word]
+
+    # 2. If it's already a valid animation word
     if word in animation_words:
+        synonym_cache[word] = word
+        save_cache()
         return word
-    
-    else:
-        # Use OpenRouter API to find the closest word in the vocabulary
-        prompt = f"""
-        You are an AI that helps translate text into sign language. You are given:
 
-        - An input word: "{word}"
-        - A list of known words that can be animated: {animation_words}
+    # 3. Otherwise call OpenRouter AI
+    prompt = f"""
+    You are an AI that helps translate text into sign language. You are given:
 
-        Your task:
-        - If the input word is in the list, return it.
-        - If a **close synonym** is in the list (e.g., "father" → "dad"), return it.
-        - If **no close synonym** exists, return "-1"
+    - An input word: "{word}"
+    - A list of known words that can be animated: {animation_words}
 
-        ⚠️ Do not guess. If you are unsure or the match is too weak, return "-1".
-        Only return the chosen word or "-1". No explanation.
-        """
+    Your task:
+    - If the input word is in the list, return it.
+    - If a **close synonym** is in the list (e.g., "father" → "dad"), return it.
+    - If **no close synonym** exists, return "-1"
 
+    ⚠️ Do not guess. If you are unsure or the match is too weak, return "-1".
+    Only return the chosen word or "-1". No explanation.
+    """
 
-        headers = {
-                "Authorization": f"Bearer {settings.OPENROUTER_API_KEY}",
-                "Content-Type": "application/json",
-                "HTTP-Referer": "http://localhost",
-                "X-Title": "Mime AI Glossifier",
-                "X-User": "MimeAIUser"
-            }
+    headers = {
+        "Authorization": f"Bearer {settings.OPENROUTER_API_KEY}",
+        "Content-Type": "application/json",
+        "HTTP-Referer": "http://localhost",
+        "X-Title": "Mime AI Glossifier",
+        "X-User": "MimeAIUser"
+    }
 
-        payload = {
-            "model": "x-ai/grok-3-mini",  # Switched to a more capable model
-            "temperature": 0.7,
-            "messages": [{"role": "user", "content": prompt}],
-            "max_tokens": 6000  # Increased to ensure complete responses
-        }
+    payload = {
+        "model": "x-ai/grok-3-mini",
+        "temperature": 0.7,
+        "messages": [{"role": "user", "content": prompt}],
+        "max_tokens": 6000
+    }
 
-        # print(f"Requesting synonym for: {word}")
-        # print(f"Payload: {payload}")
-
-        # Make the API request
+    try:
         response = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=payload)
         response.raise_for_status()
         data = response.json()
-        # print(f"Response: {data}")
-        # print(data['choices'][0]['message']['content'].strip() if 'choices' in data and data['choices'] else None)
-        return data['choices'][0]['message']['content'].strip() if 'choices' in data and data['choices'] else None
+        synonym = data['choices'][0]['message']['content'].strip()
+
+        # Cache result
+        if synonym == "-1":
+            synonym_cache[word] = word  # Cache the original word if no synonym found
+        else:
+            synonym_cache[word] = synonym
+
+        save_cache()
+        
+        return synonym
+
+    except Exception as e:
+        print(f"Error getting synonym for '{word}':", e)
+        return word  # fallback
+
 
 def normalize_and_glossify(text):
-    # Clean text
     text = text.lower()
-    
     gloss = []
+
     for token in text.split():
+
         if token in animation_words:
             gloss.append(token)
+
+        elif token in stop_words:
+            continue
+
         else:
-            # Fallback: return token itself or "[UNK]"
             s = get_synonym_in_vocab_spacy(token)
             if s != "-1":
                 gloss.append(s)
             else:
-                gloss.append(token)  # or "[UNK]" if you prefer
+                gloss.append(token)
 
     return gloss

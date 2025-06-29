@@ -3,8 +3,12 @@ import os
 from django.conf import settings
 import requests
 from nltk.corpus import stopwords
+import nltk
+c = 0
+if(c == 0):
+    nltk.download('stopwords')
+    c = 1
 
-# import nltk
 # nltk.download('stopwords')
 
 stop_words = set(stopwords.words('english'))

@@ -98,3 +98,5 @@ wasabi
 weasel
 Werkzeug
 wrapt
+gunicorn
+whitenoise
